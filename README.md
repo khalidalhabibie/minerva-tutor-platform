@@ -1,6 +1,6 @@
 # minerva-tutor-platform
 
-Full-stack take-home assignment for a tuition marketplace. The project is being built incrementally.
+Full-stack for a tuition marketplace. The project is being built incrementally.
 
 ## Current Scope
 
