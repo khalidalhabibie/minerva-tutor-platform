@@ -6,9 +6,13 @@
   "scripts": {
     "dev": "pnpm --filter @minerva/api dev",
     "dev:api": "pnpm --filter @minerva/api dev",
+    "dev:web": "pnpm --filter @minerva/web dev",
     "build": "pnpm --filter @minerva/api build",
+    "build:web": "pnpm --filter @minerva/web build",
     "test": "pnpm --filter @minerva/api test",
     "lint": "pnpm --filter @minerva/api lint",
+    "lint:web": "pnpm --filter @minerva/web lint",
+    "typecheck:web": "pnpm --filter @minerva/web typecheck",
     "prisma:generate": "pnpm --filter @minerva/api prisma:generate",
     "prisma:migrate": "pnpm --filter @minerva/api prisma:migrate",
     "seed": "pnpm --filter @minerva/api seed"

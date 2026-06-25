@@ -9,6 +9,7 @@ Full-stack tuition marketplace built incrementally as a take-home project.
 - PostgreSQL via Docker Compose.
 - Prisma schema, migrations, and seeded demo data.
 - JWT auth, role-based access control, tuition cases, tutor profiles, and secure local document storage.
+- Next.js frontend shell in `apps/web` with login, auth state, role navigation, protected route handling, and frontend docs.
 
 ## Prerequisites
 
@@ -72,8 +73,28 @@ The backend reads these values from `.env`:
 - `PORT`: API port.
 - `UPLOAD_DIR`: local private upload directory.
 - `MAX_FILE_SIZE_MB`: maximum upload size, default example is `5`.
+- `NEXT_PUBLIC_API_BASE_URL`: frontend API base URL, for example `http://localhost:3001`.
 
 Do not commit real secrets. `.env.example` contains local dummy values only.
+
+## Frontend Setup
+
+Run the frontend dev server:
+
+```sh
+pnpm dev:web
+```
+
+The web app defaults to `http://localhost:3000` and expects the backend API at `NEXT_PUBLIC_API_BASE_URL`.
+
+Implemented frontend routes:
+
+- `/login`
+- `/docs`
+- `/parent/cases`
+- `/tutor/cases`
+
+Feature pages are placeholders for now; they exist so login can redirect parents to `/parent/cases` and tutors to `/tutor/cases`.
 
 ## Demo Credentials
 
@@ -135,9 +156,13 @@ Documents are stored through a storage service abstraction with a local filesyst
 
 ```sh
 pnpm dev:api
+pnpm dev:web
 pnpm build
+pnpm build:web
 pnpm test
 pnpm lint
+pnpm lint:web
+pnpm typecheck:web
 pnpm prisma:generate
 pnpm prisma:migrate
 pnpm seed
@@ -154,5 +179,6 @@ The workflow installs dependencies with the lockfile package manager, generates 
 ```text
 apps/
   api/        NestJS backend and Prisma schema
+  web/        Next.js frontend
 docs/         Planning and delivery notes
 ```
