@@ -1,10 +1,15 @@
 # minerva-tutor-platform
 
-Full-stack take-home assignment for a tuition marketplace.
+Full-stack take-home assignment for a tuition marketplace. The project is being built incrementally.
 
 ## Current Scope
 
-This step defines the Prisma data model and seeded demo data. API business endpoints are intentionally not implemented yet.
+- Monorepo workspace.
+- NestJS API in `apps/api`.
+- PostgreSQL via Docker Compose.
+- Prisma schema and initial migration for marketplace entities.
+- Seeded demo Parent and Tutor users.
+- Swagger/OpenAPI and business API endpoints will be expanded in later tasks.
 
 ## Prerequisites
 
@@ -14,13 +19,15 @@ This step defines the Prisma data model and seeded demo data. API business endpo
 
 ## Environment
 
+Copy the example environment file:
+
 ```sh
 cp .env.example .env
 ```
 
-The default `DATABASE_URL` points to the PostgreSQL service in `docker-compose.yml`.
+Default local values point to the PostgreSQL service from `docker-compose.yml`.
 
-## Database
+## Database Setup
 
 Start PostgreSQL:
 
@@ -67,3 +74,23 @@ Users:
 - `second-tutor@example.com` / Tutor
 
 Seed data includes two tutor profiles, two tuition cases owned by the parent, one active case invitation, and one sample tutor profile document metadata row.
+
+## Backend Scripts
+
+```sh
+pnpm dev:api
+pnpm build
+pnpm test
+pnpm lint
+pnpm prisma:generate
+pnpm prisma:migrate
+pnpm seed
+```
+
+## Repository Layout
+
+```text
+apps/
+  api/        NestJS backend and Prisma schema
+docs/         Planning and delivery notes
+```

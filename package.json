@@ -4,6 +4,11 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
+    "dev": "pnpm --filter @minerva/api dev",
+    "dev:api": "pnpm --filter @minerva/api dev",
+    "build": "pnpm --filter @minerva/api build",
+    "test": "pnpm --filter @minerva/api test",
+    "lint": "pnpm --filter @minerva/api lint",
     "prisma:generate": "pnpm --filter @minerva/api prisma:generate",
     "prisma:migrate": "pnpm --filter @minerva/api prisma:migrate",
     "seed": "pnpm --filter @minerva/api seed"
