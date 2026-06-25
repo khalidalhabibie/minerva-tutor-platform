@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AccessControlModule } from "./access-control/access-control.module";
 import { AuthModule } from "./auth/auth.module";
+import { CasesModule } from "./cases/cases.module";
 import { validateEnvironment } from "./config/env.validation";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -15,6 +16,7 @@ import { PrismaModule } from "./prisma/prisma.module";
     }),
     AccessControlModule,
     AuthModule,
+    CasesModule,
     HealthModule,
     PrismaModule
   ]
