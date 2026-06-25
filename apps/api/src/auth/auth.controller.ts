@@ -9,6 +9,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
+  ApiBadRequestResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -32,15 +33,19 @@ export class AuthController {
   @HttpCode(200)
   @ApiOperation({ summary: "Log in with email and password" })
   @ApiOkResponse({ type: LoginResponseDto })
+  @ApiBadRequestResponse({ description: "Invalid request body" })
   @ApiUnauthorizedResponse({ description: "Invalid email or password" })
   async login(@Body() body: LoginDto): Promise<LoginResponseDto> {
     return this.authService.login(body.email, body.password);
   }
 
   @Post("logout")
+  @UseGuards(JwtAuthGuard)
   @HttpCode(200)
+  @ApiBearerAuth()
   @ApiOperation({ summary: "Log out from a client-managed JWT session" })
   @ApiOkResponse({ type: LogoutResponseDto })
+  @ApiUnauthorizedResponse({ description: "Missing or invalid bearer token" })
   logout(): LogoutResponseDto {
     return { ok: true };
   }

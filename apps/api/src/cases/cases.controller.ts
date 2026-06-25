@@ -13,6 +13,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
+  ApiBadRequestResponse,
   ApiBody,
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -45,6 +46,7 @@ export class CasesController {
   @ApiOperation({ summary: "Create a tuition case as a parent" })
   @ApiBody({ type: CreateCaseDto })
   @ApiCreatedResponse({ type: CaseResponseDto })
+  @ApiBadRequestResponse({ description: "Invalid request body" })
   @ApiUnauthorizedResponse({ description: "Missing or invalid bearer token" })
   @ApiForbiddenResponse({ description: "Only parents can create cases" })
   createCase(
@@ -57,6 +59,7 @@ export class CasesController {
   @Get()
   @ApiOperation({ summary: "List accessible tuition cases" })
   @ApiOkResponse({ type: PaginatedCasesResponseDto })
+  @ApiBadRequestResponse({ description: "Invalid query parameters" })
   @ApiUnauthorizedResponse({ description: "Missing or invalid bearer token" })
   listCases(
     @CurrentUser() user: AuthTokenPayload,
@@ -82,6 +85,7 @@ export class CasesController {
   @ApiOperation({ summary: "Edit a case as the parent owner" })
   @ApiBody({ type: UpdateCaseDto })
   @ApiOkResponse({ type: CaseResponseDto })
+  @ApiBadRequestResponse({ description: "Invalid request body" })
   @ApiUnauthorizedResponse({ description: "Missing or invalid bearer token" })
   @ApiForbiddenResponse({ description: "Only the parent owner can edit a case" })
   @ApiNotFoundResponse({ description: "Case not found" })
@@ -97,6 +101,7 @@ export class CasesController {
   @ApiOperation({ summary: "Invite a tutor to a case as the parent owner" })
   @ApiBody({ type: CreateInvitationDto })
   @ApiCreatedResponse({ type: InvitationResponseDto })
+  @ApiBadRequestResponse({ description: "Invalid request body or tutor target" })
   @ApiUnauthorizedResponse({ description: "Missing or invalid bearer token" })
   @ApiForbiddenResponse({ description: "Only the parent owner can invite tutors" })
   @ApiNotFoundResponse({ description: "Case not found" })
