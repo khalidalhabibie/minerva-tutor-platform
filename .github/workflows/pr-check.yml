@@ -1,0 +1,162 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+env:
+  DATABASE_URL: postgresql://minerva:minerva@localhost:5432/minerva?schema=public
+  JWT_SECRET: ci-only-dummy-secret
+  JWT_EXPIRES_IN: 1h
+  PORT: 3001
+  UPLOAD_DIR: ./uploads
+  MAX_FILE_SIZE_MB: 10
+  NEXT_PUBLIC_API_BASE_URL: http://localhost:3001
+
+jobs:
+  backend:
+    name: Backend checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Detect package manager
+        id: pm
+        shell: bash
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            echo "name=pnpm" >> "$GITHUB_OUTPUT"
+            echo "install=pnpm install --frozen-lockfile" >> "$GITHUB_OUTPUT"
+            corepack enable
+            corepack prepare pnpm@9.15.0 --activate
+          elif [ -f yarn.lock ]; then
+            echo "name=yarn" >> "$GITHUB_OUTPUT"
+            echo "install=yarn install --frozen-lockfile" >> "$GITHUB_OUTPUT"
+            corepack enable
+          elif [ -f package-lock.json ]; then
+            echo "name=npm" >> "$GITHUB_OUTPUT"
+            echo "install=npm ci" >> "$GITHUB_OUTPUT"
+          else
+            echo "No supported lockfile found" >&2
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: ${{ steps.pm.outputs.install }}
+
+      - name: Backend quality checks
+        shell: bash
+        run: |
+          has_script() {
+            node -e "const p=require('./$1/package.json'); process.exit(p.scripts && p.scripts['$2'] ? 0 : 1)"
+          }
+
+          run_script() {
+            local package_dir="$1"
+            local script_name="$2"
+
+            if ! has_script "$package_dir" "$script_name"; then
+              echo "Skipping $package_dir:$script_name (script not found)"
+              return 0
+            fi
+
+            if [ "${{ steps.pm.outputs.name }}" = "pnpm" ]; then
+              pnpm --dir "$package_dir" run "$script_name"
+            elif [ "${{ steps.pm.outputs.name }}" = "yarn" ]; then
+              (cd "$package_dir" && yarn run "$script_name")
+            else
+              (cd "$package_dir" && npm run "$script_name")
+            fi
+          }
+
+          if [ -f apps/api/prisma/schema.prisma ]; then
+            run_script apps/api prisma:generate
+          fi
+
+          run_script apps/api lint
+          run_script apps/api typecheck
+          run_script apps/api build
+          run_script apps/api test
+
+  frontend:
+    name: Frontend checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Detect package manager
+        id: pm
+        shell: bash
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            echo "name=pnpm" >> "$GITHUB_OUTPUT"
+            echo "install=pnpm install --frozen-lockfile" >> "$GITHUB_OUTPUT"
+            corepack enable
+            corepack prepare pnpm@9.15.0 --activate
+          elif [ -f yarn.lock ]; then
+            echo "name=yarn" >> "$GITHUB_OUTPUT"
+            echo "install=yarn install --frozen-lockfile" >> "$GITHUB_OUTPUT"
+            corepack enable
+          elif [ -f package-lock.json ]; then
+            echo "name=npm" >> "$GITHUB_OUTPUT"
+            echo "install=npm ci" >> "$GITHUB_OUTPUT"
+          else
+            echo "No supported lockfile found" >&2
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: ${{ steps.pm.outputs.install }}
+
+      - name: Frontend quality checks
+        shell: bash
+        run: |
+          if [ ! -f apps/web/package.json ]; then
+            echo "Skipping frontend checks (apps/web/package.json not found)"
+            exit 0
+          fi
+
+          has_script() {
+            node -e "const p=require('./$1/package.json'); process.exit(p.scripts && p.scripts['$2'] ? 0 : 1)"
+          }
+
+          run_script() {
+            local package_dir="$1"
+            local script_name="$2"
+
+            if ! has_script "$package_dir" "$script_name"; then
+              echo "Skipping $package_dir:$script_name (script not found)"
+              return 0
+            fi
+
+            if [ "${{ steps.pm.outputs.name }}" = "pnpm" ]; then
+              pnpm --dir "$package_dir" run "$script_name"
+            elif [ "${{ steps.pm.outputs.name }}" = "yarn" ]; then
+              (cd "$package_dir" && yarn run "$script_name")
+            else
+              (cd "$package_dir" && npm run "$script_name")
+            fi
+          }
+
+          run_script apps/web lint
+          run_script apps/web typecheck
+          run_script apps/web build
