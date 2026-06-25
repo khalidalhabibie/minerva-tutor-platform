@@ -1,0 +1,11 @@
+{
+  "name": "minerva-tutor-platform",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "prisma:generate": "pnpm --filter @minerva/api prisma:generate",
+    "prisma:migrate": "pnpm --filter @minerva/api prisma:migrate",
+    "seed": "pnpm --filter @minerva/api seed"
+  }
+}
