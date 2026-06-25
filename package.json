@@ -10,6 +10,7 @@
     "test": "pnpm --filter @minerva/api test",
     "lint": "pnpm --filter @minerva/api lint",
     "prisma:generate": "pnpm --filter @minerva/api prisma:generate",
-    "prisma:migrate": "pnpm --filter @minerva/api prisma:migrate"
+    "prisma:migrate": "pnpm --filter @minerva/api prisma:migrate",
+    "seed": "pnpm --filter @minerva/api seed"
   }
 }

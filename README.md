@@ -1,19 +1,15 @@
 # minerva-tutor-platform
 
-Full-stack take-home assignment for a tuition marketplace. The project is being built incrementally, starting with a NestJS backend foundation.
+Full-stack take-home assignment for a tuition marketplace. The project is being built incrementally.
 
 ## Current Scope
 
 - Monorepo workspace.
 - NestJS API in `apps/api`.
 - PostgreSQL via Docker Compose.
-- Swagger/OpenAPI at `/docs`.
-- Health endpoint at `GET /health`.
-- Global request validation.
-- Safe global exception responses.
-- Config module and Prisma placeholder.
-
-Business features are intentionally not implemented yet.
+- Prisma schema and initial migration for marketplace entities.
+- Seeded demo Parent and Tutor users.
+- Swagger/OpenAPI and business API endpoints will be expanded in later tasks.
 
 ## Prerequisites
 
@@ -31,30 +27,53 @@ cp .env.example .env
 
 Default local values point to the PostgreSQL service from `docker-compose.yml`.
 
-## Run PostgreSQL
+## Database Setup
+
+Start PostgreSQL:
 
 ```sh
 docker compose up -d postgres
 ```
 
-## Install Dependencies
+Install dependencies:
 
 ```sh
 pnpm install
 ```
 
-## Run the Backend
+Generate Prisma Client:
 
 ```sh
-pnpm dev:api
+pnpm prisma:generate
 ```
 
-The API defaults to `http://localhost:3001`.
+Run migrations:
 
-Useful endpoints:
+```sh
+pnpm prisma:migrate
+```
 
-- `GET http://localhost:3001/health`
-- `GET http://localhost:3001/docs`
+Seed demo data:
+
+```sh
+pnpm seed
+```
+
+## Seed Credentials
+
+All seeded users use this password:
+
+```text
+Password123!
+```
+
+Users:
+
+- `parent@example.com` / Parent
+- `tutor@example.com` / Tutor
+- `second-tutor@example.com` / Tutor
+
+Seed data includes two tutor profiles, two tuition cases owned by the parent, one active case invitation, and one sample tutor profile document metadata row.
 
 ## Backend Scripts
 
@@ -65,12 +84,13 @@ pnpm test
 pnpm lint
 pnpm prisma:generate
 pnpm prisma:migrate
+pnpm seed
 ```
 
 ## Repository Layout
 
 ```text
 apps/
-  api/        NestJS backend
+  api/        NestJS backend and Prisma schema
 docs/         Planning and delivery notes
 ```

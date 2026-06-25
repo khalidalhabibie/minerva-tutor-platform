@@ -1,3 +1,55 @@
+<<<<<<< HEAD
+# Dependencies
+node_modules/
+**/node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+**/dist/
+.next/
+out/
+build/
+
+# Test and coverage output
+coverage/
+*.lcov
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local uploads and generated files
+uploads/
+tmp/
+temp/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# TypeScript and framework caches
+*.tsbuildinfo
+.turbo/
+.eslintcache
+
+# Prisma local artifacts
+prisma/dev.db
+prisma/dev.db-journal
+=======
 node_modules
 dist
 .env
@@ -5,3 +57,4 @@ dist
 coverage
 uploads
 .DS_Store
+>>>>>>> 0edc7a216e1c26260ba3bcaf258fbe7c2a962612
