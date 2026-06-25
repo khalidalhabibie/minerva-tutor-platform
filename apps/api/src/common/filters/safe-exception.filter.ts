@@ -33,6 +33,10 @@ export class SafeExceptionFilter implements ExceptionFilter {
             error: "Internal Server Error"
           };
 
+    if (!(exception instanceof HttpException)) {
+      console.error(exception);
+    }
+
     response.status(status).json(payload);
   }
 
