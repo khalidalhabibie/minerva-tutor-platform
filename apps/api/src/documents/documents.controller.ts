@@ -14,6 +14,7 @@ import {
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiBearerAuth,
+  ApiBadRequestResponse,
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
@@ -21,6 +22,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiPayloadTooLargeResponse,
   ApiTags,
   ApiUnauthorizedResponse
 } from "@nestjs/swagger";
@@ -61,6 +63,8 @@ export class DocumentsController {
   @ApiConsumes("multipart/form-data")
   @ApiBody(multipartFileSchema)
   @ApiCreatedResponse({ type: DocumentResponseDto })
+  @ApiBadRequestResponse({ description: "Missing file or unsupported file type" })
+  @ApiPayloadTooLargeResponse({ description: "Uploaded file exceeds max size" })
   @ApiUnauthorizedResponse({ description: "Missing or invalid bearer token" })
   @ApiForbiddenResponse({ description: "User cannot upload to this case" })
   @ApiNotFoundResponse({ description: "Case not found" })
@@ -91,6 +95,8 @@ export class DocumentsController {
   @ApiConsumes("multipart/form-data")
   @ApiBody(multipartFileSchema)
   @ApiCreatedResponse({ type: DocumentResponseDto })
+  @ApiBadRequestResponse({ description: "Missing file or unsupported file type" })
+  @ApiPayloadTooLargeResponse({ description: "Uploaded file exceeds max size" })
   @ApiUnauthorizedResponse({ description: "Missing or invalid bearer token" })
   @ApiForbiddenResponse({ description: "Only the owning tutor can upload" })
   @ApiNotFoundResponse({ description: "Tutor profile not found" })

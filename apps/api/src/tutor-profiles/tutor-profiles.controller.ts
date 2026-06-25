@@ -10,6 +10,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
+  ApiBadRequestResponse,
   ApiBody,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -40,6 +41,7 @@ export class TutorProfilesController {
   @Get("tutor-profiles")
   @ApiOperation({ summary: "Browse tutor profiles as a parent" })
   @ApiOkResponse({ type: PaginatedTutorProfilesResponseDto })
+  @ApiBadRequestResponse({ description: "Invalid query parameters" })
   @ApiUnauthorizedResponse({ description: "Missing or invalid bearer token" })
   @ApiForbiddenResponse({ description: "Only parents can browse tutor profiles" })
   listTutorProfiles(
@@ -78,6 +80,7 @@ export class TutorProfilesController {
   @ApiOperation({ summary: "Create or update the current tutor's own profile" })
   @ApiBody({ type: UpsertTutorProfileDto })
   @ApiOkResponse({ type: TutorProfileResponseDto })
+  @ApiBadRequestResponse({ description: "Invalid request body" })
   @ApiUnauthorizedResponse({ description: "Missing or invalid bearer token" })
   @ApiForbiddenResponse({ description: "Only tutors can access this endpoint" })
   upsertMyTutorProfile(
