@@ -87,6 +87,12 @@ pnpm prisma:migrate
 pnpm seed
 ```
 
+## Pull Request Checks
+
+GitHub Actions runs `.github/workflows/pr-check.yml` on pull requests targeting `main` or `master`.
+
+The workflow installs dependencies with the lockfile package manager, generates Prisma Client when Prisma is present, and runs available backend `lint`, `typecheck`, `build`, and `test` scripts. Frontend checks run separately for `apps/web` when that package exists. CI uses safe dummy environment variables and does not deploy or require production secrets.
+
 ## Repository Layout
 
 ```text

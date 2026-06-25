@@ -6,6 +6,7 @@ import { CasesModule } from "./cases/cases.module";
 import { validateEnvironment } from "./config/env.validation";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
+import { TutorProfilesModule } from "./tutor-profiles/tutor-profiles.module";
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { PrismaModule } from "./prisma/prisma.module";
     AuthModule,
     CasesModule,
     HealthModule,
-    PrismaModule
+    PrismaModule,
+    TutorProfilesModule
   ]
 })
 export class AppModule {}
