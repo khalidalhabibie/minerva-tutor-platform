@@ -30,8 +30,8 @@ export class TutorProfilesService {
       throw new ForbiddenException("Only parents can browse tutor profiles");
     }
 
-    const page = query.page ?? 1;
-    const pageSize = query.pageSize ?? 20;
+    const page = Number(query.page ?? 1);
+    const pageSize = Number(query.pageSize ?? 20);
     const where = this.buildListWhere(query);
 
     const [total, profiles] = await this.prisma.$transaction([
