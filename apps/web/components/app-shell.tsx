@@ -33,9 +33,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               </>
             ) : null}
             {user?.role === "TUTOR" ? (
-              <Link className="text-slate-700 hover:text-ink" href="/tutor/cases">
-                Invited cases
-              </Link>
+              <>
+                <Link className="text-slate-700 hover:text-ink" href="/tutor/cases">
+                  Invited cases
+                </Link>
+                <Link className="text-slate-700 hover:text-ink" href="/tutor/profile">
+                  Profile
+                </Link>
+              </>
             ) : null}
             <Link className="text-slate-700 hover:text-ink" href="/docs">
               Docs

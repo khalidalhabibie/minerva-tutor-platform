@@ -182,8 +182,29 @@ export const apiClient = {
     return request<TutorProfile>(`/tutor-profiles/${id}`);
   },
 
+  getMyTutorProfile(): Promise<TutorProfile> {
+    return request<TutorProfile>("/tutor-profile/me");
+  },
+
+  upsertMyTutorProfile(input: TutorProfileFormInput): Promise<TutorProfile> {
+    return request<TutorProfile>("/tutor-profile/me", {
+      method: "PUT",
+      body: input
+    });
+  },
+
   listTutorProfileDocuments(profileId: string): Promise<DocumentMetadata[]> {
     return request<DocumentMetadata[]>(`/tutor-profiles/${profileId}/documents`);
+  },
+
+  uploadTutorProfileDocument(file: File): Promise<DocumentMetadata> {
+    const body = new FormData();
+    body.append("file", file);
+
+    return request<DocumentMetadata>("/tutor-profile/documents", {
+      method: "POST",
+      body
+    });
   },
 
   async downloadDocument(id: string): Promise<Blob> {
@@ -221,6 +242,12 @@ export type CaseFormInput = {
   level: string;
   location: string;
   budgetPerHour: number;
+};
+
+export type TutorProfileFormInput = {
+  displayName: string;
+  qualifications: string;
+  experiences: string;
 };
 
 function toQueryString(params: Record<string, string | number | undefined>): string {
