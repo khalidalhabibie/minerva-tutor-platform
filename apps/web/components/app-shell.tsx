@@ -17,9 +17,20 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
           <nav className="flex items-center gap-3 text-sm">
             {user?.role === "PARENT" ? (
-              <Link className="text-slate-700 hover:text-ink" href="/parent/cases">
-                Cases
-              </Link>
+              <>
+                <Link
+                  className="text-slate-700 hover:text-ink"
+                  href="/parent/cases"
+                >
+                  Cases
+                </Link>
+                <Link
+                  className="text-slate-700 hover:text-ink"
+                  href="/parent/tutors"
+                >
+                  Tutors
+                </Link>
+              </>
             ) : null}
             {user?.role === "TUTOR" ? (
               <Link className="text-slate-700 hover:text-ink" href="/tutor/cases">
