@@ -1,6 +1,6 @@
 # minerva-tutor-platform
 
-Minerva is a full-stack tuition marketplace take-home project. It supports parent and tutor roles, authenticated case management, tutor profiles, case invitations, and authorized document upload/download.
+Minerva is a full-stack tuition marketplace take-home project. It supports parent and tutor roles, authenticated case management, tutor profiles, tutor invitations, and authorized document upload/download.
 
 ## Tech Stack
 
@@ -12,11 +12,7 @@ Minerva is a full-stack tuition marketplace take-home project. It supports paren
 
 ## Local Setup
 
-Prerequisites:
-
-- Node.js 20+
-- pnpm 9+
-- Docker
+Prerequisites: Node.js 20+, pnpm 9+, and Docker.
 
 ```sh
 cp .env.example .env
@@ -25,7 +21,15 @@ docker compose up -d postgres
 pnpm prisma:generate
 pnpm prisma:migrate
 pnpm seed
+```
+
+Run the API and frontend in separate terminals:
+
+```sh
 pnpm dev:api
+```
+
+```sh
 pnpm dev:web
 ```
 
@@ -33,8 +37,8 @@ Local URLs:
 
 - Frontend: `http://localhost:3000`
 - Backend API: `http://localhost:3001`
-- Frontend docs page: `http://localhost:3000/docs`
 - Swagger/OpenAPI docs: `http://localhost:3001/docs`
+- Frontend docs page: `http://localhost:3000/docs`
 
 ## Environment Variables
 
@@ -50,23 +54,13 @@ Do not commit real secrets. `.env.example` contains local development values onl
 
 ## Database Migration and Seed
 
-Generate Prisma Client:
-
 ```sh
 pnpm prisma:generate
-```
-
-Run migrations:
-
-```sh
 pnpm prisma:migrate
-```
-
-Seed demo users and sample marketplace data:
-
-```sh
 pnpm seed
 ```
+
+If Prisma cannot find `DATABASE_URL`, export it in the shell before running migration or seed commands.
 
 ## Demo Credentials
 
@@ -80,6 +74,8 @@ Password123!
 - `tutor@example.com` / Tutor
 - `second-tutor@example.com` / Tutor
 
+Seed data includes tutor profiles, parent-owned tuition cases, and an active tutor invitation.
+
 ## Deployment URLs
 
 - Deployed frontend: `<deployed-frontend-url>`
@@ -89,15 +85,15 @@ Password123!
 
 ## Auth Choice and Tradeoffs
 
-The MVP uses email/password login with bcrypt password hashes and JWT bearer tokens. The frontend stores the access token in `localStorage`, and logout is client-managed by clearing that token.
+The MVP uses email/password login with bcrypt password hashes and JWT bearer tokens. The frontend stores the access token in `localStorage`; logout is client-managed by clearing that token.
 
-This keeps the take-home implementation simple and easy to run locally. For production, I would prefer HTTP-only secure cookies or a refresh-token strategy, token revocation, stronger session management, rate limiting, and password reset flows.
+This is simple and practical for the take-home. For production, I would use a stronger session strategy such as HTTP-only secure cookies or refresh tokens, add token revocation, rate limiting, password reset, and stricter deployment-specific security settings.
 
 ## Authorization Rules
 
 Authorization is enforced server-side. Frontend role checks are only for UX.
 
-- Parents can create cases.
+- Parents can create tuition cases.
 - Parents can list, view, edit, invite tutors to, revoke tutors from, and manage documents only for their own cases.
 - Tutors can list and view only cases where they have an active invitation.
 - Parents can browse and view tutor profiles.
@@ -122,7 +118,7 @@ Authorization is enforced server-side. Frontend role checks are only for UX.
 - JWT storage in `localStorage` is acceptable for this MVP but not ideal for production.
 - Local file storage is not durable production storage.
 - The UI is intentionally simple and focuses on the required workflows.
-- There is no email delivery, password reset, tutor availability, messaging, notifications, or payment workflow.
+- There is no email delivery, password reset, tutor availability, messaging, notification, or payment workflow.
 - There are backend unit tests, but no browser end-to-end test suite yet.
 - Deployment configuration is documented but not automated.
 

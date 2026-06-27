@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Dependencies
 node_modules/
 **/node_modules/
@@ -49,12 +48,3 @@ Thumbs.db
 # Prisma local artifacts
 prisma/dev.db
 prisma/dev.db-journal
-=======
-node_modules
-dist
-.env
-.env.local
-coverage
-uploads
-.DS_Store
->>>>>>> 0edc7a216e1c26260ba3bcaf258fbe7c2a962612
