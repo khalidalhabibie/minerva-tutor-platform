@@ -151,6 +151,8 @@ pnpm seed
 
 The Playwright E2E suite covers the required take-home demo flow: auth smoke checks, tutor profile setup, parent tutor browsing, case creation, tutor invitation, invited tutor access, and non-invited tutor denial. It targets `E2E_BASE_URL` and uses seeded demo users from environment variables.
 
+Run the suite against the deployed frontend:
+
 ```sh
 E2E_BASE_URL=https://minerva-tutor-platform-web.vercel.app \
 E2E_PARENT_EMAIL=parent@example.com \
@@ -161,6 +163,20 @@ E2E_SECOND_TUTOR_EMAIL=second-tutor@example.com \
 E2E_SECOND_TUTOR_PASSWORD='Password123!' \
 pnpm test:e2e
 ```
+
+Playwright prints a list reporter result in the terminal and writes an HTML report to `playwright-report/`. Open the latest report with:
+
+```sh
+pnpm exec playwright show-report
+```
+
+Video recording is enabled for E2E proof artifacts. Generated videos are stored under `test-results/` and can be found with:
+
+```sh
+find test-results -name "*.webm"
+```
+
+`playwright-report/` and `test-results/` are generated locally and ignored by git; do not commit reports, traces, or videos.
 
 Use headed mode while debugging:
 
