@@ -1,41 +1,54 @@
 # minerva-tutor-platform
 
-Full-stack tuition marketplace built incrementally as a take-home project.
+Minerva is a full-stack tuition marketplace take-home project. It supports parent and tutor roles, authenticated case management, tutor profiles, case invitations, and authorized document upload/download.
 
-## Current Scope
+## Tech Stack
 
-- Monorepo workspace.
-- NestJS API in `apps/api`.
-- PostgreSQL via Docker Compose.
-- Prisma schema, migrations, and seeded demo data.
-- JWT auth, role-based access control, tuition cases, tutor profiles, and secure local document storage.
-- Next.js frontend shell in `apps/web` with login, auth state, role navigation, protected route handling, and frontend docs.
+- Monorepo: pnpm workspaces
+- Backend: NestJS, TypeScript, Prisma, PostgreSQL, Swagger/OpenAPI
+- Frontend: Next.js App Router, TypeScript, Tailwind CSS, TanStack Query, React Hook Form
+- Auth: email/password login, bcrypt password hashing, JWT bearer tokens
+- Files: safe local storage abstraction for MVP uploads
 
-## Prerequisites
+## Local Setup
+
+Prerequisites:
 
 - Node.js 20+
 - pnpm 9+
-- Docker, for local PostgreSQL
-
-## Backend Setup
-
-Copy the example environment file:
+- Docker
 
 ```sh
 cp .env.example .env
-```
-
-Start PostgreSQL:
-
-```sh
-docker compose up -d postgres
-```
-
-Install dependencies:
-
-```sh
 pnpm install
+docker compose up -d postgres
+pnpm prisma:generate
+pnpm prisma:migrate
+pnpm seed
+pnpm dev:api
+pnpm dev:web
 ```
+
+Local URLs:
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:3001`
+- Frontend docs page: `http://localhost:3000/docs`
+- Swagger/OpenAPI docs: `http://localhost:3001/docs`
+
+## Environment Variables
+
+- `DATABASE_URL`: PostgreSQL connection string.
+- `JWT_SECRET`: secret used to sign JWTs.
+- `JWT_EXPIRES_IN`: access token lifetime, for example `1h`.
+- `PORT`: backend port, usually `3001`.
+- `UPLOAD_DIR`: private local upload directory.
+- `MAX_FILE_SIZE_MB`: upload size limit, default example is `5`.
+- `NEXT_PUBLIC_API_BASE_URL`: frontend API base URL, usually `http://localhost:3001`.
+
+Do not commit real secrets. `.env.example` contains local development values only.
+
+## Database Migration and Seed
 
 Generate Prisma Client:
 
@@ -49,52 +62,11 @@ Run migrations:
 pnpm prisma:migrate
 ```
 
-Seed demo data:
+Seed demo users and sample marketplace data:
 
 ```sh
 pnpm seed
 ```
-
-Run the backend:
-
-```sh
-pnpm dev:api
-```
-
-The API defaults to `http://localhost:3001`.
-
-## Environment Variables
-
-The backend reads these values from `.env`:
-
-- `DATABASE_URL`: PostgreSQL connection string.
-- `JWT_SECRET`: secret used to sign bearer tokens.
-- `JWT_EXPIRES_IN`: access token lifetime, for example `1h`.
-- `PORT`: API port.
-- `UPLOAD_DIR`: local private upload directory.
-- `MAX_FILE_SIZE_MB`: maximum upload size, default example is `5`.
-- `NEXT_PUBLIC_API_BASE_URL`: frontend API base URL, for example `http://localhost:3001`.
-
-Do not commit real secrets. `.env.example` contains local dummy values only.
-
-## Frontend Setup
-
-Run the frontend dev server:
-
-```sh
-pnpm dev:web
-```
-
-The web app defaults to `http://localhost:3000` and expects the backend API at `NEXT_PUBLIC_API_BASE_URL`.
-
-Implemented frontend routes:
-
-- `/login`
-- `/docs`
-- `/parent/cases`
-- `/tutor/cases`
-
-Feature pages are placeholders for now; they exist so login can redirect parents to `/parent/cases` and tutors to `/tutor/cases`.
 
 ## Demo Credentials
 
@@ -104,55 +76,66 @@ All seeded users use this password:
 Password123!
 ```
 
-Users:
-
 - `parent@example.com` / Parent
 - `tutor@example.com` / Tutor
 - `second-tutor@example.com` / Tutor
 
-Seed data includes two tutor profiles, two tuition cases owned by the parent, one active case invitation, and one sample tutor profile document metadata row.
+## Deployment URLs
 
-## Swagger
+- Deployed frontend: `<deployed-frontend-url>`
+- Deployed backend API: `<deployed-backend-url>`
+- Swagger/OpenAPI docs: `<deployed-backend-url>/docs`
+- Frontend docs page: `<deployed-frontend-url>/docs`
 
-Swagger/OpenAPI is available after starting the API:
+## Auth Choice and Tradeoffs
 
-```text
-http://localhost:3001/docs
-```
+The MVP uses email/password login with bcrypt password hashes and JWT bearer tokens. The frontend stores the access token in `localStorage`, and logout is client-managed by clearing that token.
 
-Protected endpoints use JWT bearer auth. Log in with `POST /auth/login`, then send:
+This keeps the take-home implementation simple and easy to run locally. For production, I would prefer HTTP-only secure cookies or a refresh-token strategy, token revocation, stronger session management, rate limiting, and password reset flows.
 
-```text
-Authorization: Bearer <accessToken>
-```
+## Authorization Rules
 
-`POST /auth/logout` is client-managed and returns `{ "ok": true }`; clients should discard the token.
+Authorization is enforced server-side. Frontend role checks are only for UX.
 
-## Access Control
+- Parents can create cases.
+- Parents can list, view, edit, invite tutors to, revoke tutors from, and manage documents only for their own cases.
+- Tutors can list and view only cases where they have an active invitation.
+- Parents can browse and view tutor profiles.
+- Tutors can create, view, and edit only their own profile.
+- Tutor profile documents are uploadable by the owning tutor and visible to parents.
+- Case document access follows case access.
+- Every document download re-checks authorization.
 
-Authorization is enforced server-side through `AccessControlService`.
-
-- Parents can access and edit only their own tuition cases.
-- Tutors can access only cases where they have an active invitation.
-- Only parent case owners can invite or revoke tutors.
-- Parents can browse tutor profiles.
-- Tutors can view and edit only their own profile.
-- Document listing and download re-check the same server-side authorization rules.
-
-Frontend permission checks should only improve UX; they are not a security boundary.
-
-## Upload Security
-
-Documents are stored through a storage service abstraction with a local filesystem implementation for MVP.
+## Document Upload and Download Security
 
 - Allowed file types: `pdf`, `docx`, `png`, `jpg`, `jpeg`.
-- Max file size comes from `MAX_FILE_SIZE_MB`.
-- Original filenames are sanitized before being stored as metadata.
-- Storage keys are random and are not returned by the API.
-- Filesystem paths are never exposed in API responses.
-- Download requests always re-check authorization before reading from storage.
+- File size is limited by `MAX_FILE_SIZE_MB`.
+- Original filenames are sanitized.
+- Storage keys are random.
+- API responses do not expose storage keys or filesystem paths.
+- Local storage paths are resolved defensively to prevent path traversal.
+- Downloads are served through the API after authorization checks.
+- The storage service is abstracted so local storage can later be replaced by S3, Supabase Storage, or similar.
 
-## Backend Scripts
+## Known Limitations
+
+- JWT storage in `localStorage` is acceptable for this MVP but not ideal for production.
+- Local file storage is not durable production storage.
+- The UI is intentionally simple and focuses on the required workflows.
+- There is no email delivery, password reset, tutor availability, messaging, notifications, or payment workflow.
+- There are backend unit tests, but no browser end-to-end test suite yet.
+- Deployment configuration is documented but not automated.
+
+## What I Would Improve With More Time
+
+- Add end-to-end tests for the complete parent/tutor demo flow.
+- Move uploads to managed object storage with virus scanning.
+- Add production auth hardening: refresh tokens or secure cookies, revocation, rate limits, and password reset.
+- Make CORS origins and deployment settings environment-driven.
+- Add richer tutor search, invitation notifications, and audit logs for document downloads.
+- Improve UI polish and accessibility testing.
+
+## Useful Commands
 
 ```sh
 pnpm dev:api
@@ -166,19 +149,4 @@ pnpm typecheck:web
 pnpm prisma:generate
 pnpm prisma:migrate
 pnpm seed
-```
-
-## Pull Request Checks
-
-GitHub Actions runs `.github/workflows/pr-check.yml` on pull requests targeting `main` or `master`.
-
-The workflow installs dependencies with the lockfile package manager, generates Prisma Client when Prisma is present, and runs available backend `lint`, `typecheck`, `build`, and `test` scripts. Frontend checks run separately for `apps/web` when that package exists. CI uses safe dummy environment variables and does not deploy or require production secrets.
-
-## Repository Layout
-
-```text
-apps/
-  api/        NestJS backend and Prisma schema
-  web/        Next.js frontend
-docs/         Planning and delivery notes
 ```

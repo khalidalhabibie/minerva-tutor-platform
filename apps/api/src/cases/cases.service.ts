@@ -59,8 +59,8 @@ export class CasesService {
     user: AuthTokenPayload,
     query: ListCasesQueryDto
   ): Promise<PaginatedCasesResponseDto> {
-    const page = query.page ?? 1;
-    const pageSize = query.pageSize ?? 20;
+    const page = Number(query.page ?? 1);
+    const pageSize = Number(query.pageSize ?? 20);
     const where = this.buildCaseListWhere(user, query);
 
     const [total, cases] = await this.prisma.$transaction([

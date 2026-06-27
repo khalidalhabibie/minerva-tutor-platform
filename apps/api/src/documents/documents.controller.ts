@@ -47,6 +47,13 @@ const multipartFileSchema = {
   }
 };
 
+const maxUploadSizeMb = Number(process.env.MAX_FILE_SIZE_MB ?? 5);
+const uploadInterceptorOptions = {
+  limits: {
+    fileSize: maxUploadSizeMb * 1024 * 1024
+  }
+};
+
 @ApiTags("documents")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -58,7 +65,7 @@ export class DocumentsController {
   ) {}
 
   @Post("cases/:id/documents")
-  @UseInterceptors(FileInterceptor("file"))
+  @UseInterceptors(FileInterceptor("file", uploadInterceptorOptions))
   @ApiOperation({ summary: "Upload a document to an accessible case" })
   @ApiConsumes("multipart/form-data")
   @ApiBody(multipartFileSchema)
@@ -90,7 +97,7 @@ export class DocumentsController {
   }
 
   @Post("tutor-profile/documents")
-  @UseInterceptors(FileInterceptor("file"))
+  @UseInterceptors(FileInterceptor("file", uploadInterceptorOptions))
   @ApiOperation({ summary: "Upload a document to the current tutor profile" })
   @ApiConsumes("multipart/form-data")
   @ApiBody(multipartFileSchema)
