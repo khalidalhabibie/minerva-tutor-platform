@@ -6,6 +6,7 @@
     "dev": "tsx watch src/main.ts",
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/main.js",
+    "start:prod": "node dist/main.js",
     "test": "jest --passWithNoTests",
     "lint": "eslint \"src/**/*.ts\"",
     "prisma:generate": "prisma generate",
