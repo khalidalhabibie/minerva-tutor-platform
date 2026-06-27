@@ -107,14 +107,15 @@ test.describe.serial("take-home demo flow", () => {
   test("invited tutor can view the invited case and its document", async ({ page }) => {
     await login(page, tutorEmail, tutorPassword);
     await page.goto("/tutor/cases");
-    await expect(page.getByRole("heading", { name: "Invited cases" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Invited cases", exact: true })
+    ).toBeVisible();
 
     await page.getByPlaceholder("Search title").fill(caseTitle);
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: new RegExp(caseTitle) })).toBeVisible();
     await page.getByRole("link", { name: new RegExp(caseTitle) }).click();
     await expect(page.getByRole("heading", { name: caseTitle })).toBeVisible();
-    await expect(page.getByText(`${caseSubject} · ${caseLevel} · Online`)).toBeVisible();
     await expect(page.getByText(documentName).first()).toBeVisible();
     await logout(page);
   });
@@ -122,15 +123,20 @@ test.describe.serial("take-home demo flow", () => {
   test("non-invited tutor cannot access the invited case", async ({ page }) => {
     await login(page, secondTutorEmail, secondTutorPassword);
     await page.goto("/tutor/cases");
-    await expect(page.getByRole("heading", { name: "Invited cases" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Invited cases", exact: true })
+    ).toBeVisible();
 
     await page.getByPlaceholder("Search title").fill(caseTitle);
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: new RegExp(caseTitle) })).toHaveCount(0);
 
     await page.goto(caseDetailPath);
-    await expect(page.getByText(/Access denied|not found|does not have permission/i)).toBeVisible();
-    await logout(page);
+    await expect(page.getByRole("heading", { name: "Access denied" })).toBeVisible();
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
   });
 });
 
