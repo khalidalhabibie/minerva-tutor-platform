@@ -9,10 +9,15 @@ import { SafeExceptionFilter } from "./common/filters/safe-exception.filter";
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const corsOrigins = configService
+    .get<string>("CORS_ORIGIN", "http://localhost:3000")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
   app.enableCors({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    origin: corsOrigins,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   });
 

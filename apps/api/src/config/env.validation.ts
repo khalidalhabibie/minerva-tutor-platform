@@ -7,6 +7,7 @@ type ValidatedEnvironment = {
   PORT: number;
   UPLOAD_DIR: string;
   MAX_FILE_SIZE_MB: number;
+  CORS_ORIGIN?: string;
 };
 
 const requiredVariables = [
@@ -42,6 +43,7 @@ export function validateEnvironment(config: Environment): ValidatedEnvironment {
     JWT_EXPIRES_IN: config.JWT_EXPIRES_IN as string,
     PORT: port,
     UPLOAD_DIR: config.UPLOAD_DIR as string,
-    MAX_FILE_SIZE_MB: maxFileSizeMb
+    MAX_FILE_SIZE_MB: maxFileSizeMb,
+    CORS_ORIGIN: config.CORS_ORIGIN
   };
 }
