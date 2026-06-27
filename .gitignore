@@ -13,6 +13,8 @@ build/
 # Test and coverage output
 coverage/
 *.lcov
+playwright-report/
+test-results/
 
 # Environment files
 .env

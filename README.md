@@ -119,12 +119,12 @@ Authorization is enforced server-side. Frontend role checks are only for UX.
 - Local file storage is not durable production storage.
 - The UI is intentionally simple and focuses on the required workflows.
 - There is no email delivery, password reset, tutor availability, messaging, notification, or payment workflow.
-- There are backend unit tests, but no browser end-to-end test suite yet.
+- Browser E2E coverage is limited to one happy-path demo flow.
 - Deployment configuration is documented but not automated.
 
 ## What I Would Improve With More Time
 
-- Add end-to-end tests for the complete parent/tutor demo flow.
+- Expand end-to-end coverage beyond the required parent/tutor demo flow.
 - Move uploads to managed object storage with virus scanning.
 - Add production auth hardening: refresh tokens or secure cookies, revocation, rate limits, and password reset.
 - Make CORS origins and deployment settings environment-driven.
@@ -145,4 +145,32 @@ pnpm typecheck:web
 pnpm prisma:generate
 pnpm prisma:migrate
 pnpm seed
+```
+
+## E2E Testing
+
+The Playwright E2E suite covers the required take-home demo flow: auth smoke checks, tutor profile setup, parent tutor browsing, case creation, tutor invitation, invited tutor access, and non-invited tutor denial. It targets `E2E_BASE_URL` and uses seeded demo users from environment variables.
+
+```sh
+E2E_BASE_URL=https://minerva-tutor-platform-web.vercel.app \
+E2E_PARENT_EMAIL=parent@example.com \
+E2E_PARENT_PASSWORD='Password123!' \
+E2E_TUTOR_EMAIL=tutor@example.com \
+E2E_TUTOR_PASSWORD='Password123!' \
+E2E_SECOND_TUTOR_EMAIL=second-tutor@example.com \
+E2E_SECOND_TUTOR_PASSWORD='Password123!' \
+pnpm test:e2e
+```
+
+Use headed mode while debugging:
+
+```sh
+E2E_BASE_URL=https://minerva-tutor-platform-web.vercel.app \
+E2E_PARENT_EMAIL=parent@example.com \
+E2E_PARENT_PASSWORD='Password123!' \
+E2E_TUTOR_EMAIL=tutor@example.com \
+E2E_TUTOR_PASSWORD='Password123!' \
+E2E_SECOND_TUTOR_EMAIL=second-tutor@example.com \
+E2E_SECOND_TUTOR_PASSWORD='Password123!' \
+pnpm test:e2e:headed
 ```

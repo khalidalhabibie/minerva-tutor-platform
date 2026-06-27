@@ -13,8 +13,13 @@
     "lint": "pnpm --filter @minerva/api lint",
     "lint:web": "pnpm --filter @minerva/web lint",
     "typecheck:web": "pnpm --filter @minerva/web typecheck",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
     "prisma:generate": "pnpm --filter @minerva/api prisma:generate",
     "prisma:migrate": "pnpm --filter @minerva/api prisma:migrate",
     "seed": "pnpm --filter @minerva/api seed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
   }
 }
